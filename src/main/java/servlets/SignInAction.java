@@ -21,10 +21,12 @@ public class SignInAction extends HttpServlet {
 			String role = request.getParameter("role");
 			String login = request.getParameter("login");
 			String password = request.getParameter("password");
+			// TODO : call API
 			if (login.equals("user") && password.equals("user")) {
 				session.setAttribute("role", role);
 				session.setAttribute("login", login);
 			}
+			// TODO 
 		}
 		response.sendRedirect("home_page");
 	

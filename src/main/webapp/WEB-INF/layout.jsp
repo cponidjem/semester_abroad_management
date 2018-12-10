@@ -15,7 +15,7 @@
 				<ul>
 				<c:choose>
 					<c:when test="${sessionScope.role=='student'}">
-						<li><a href="">Universities</a></li>
+						<li><a href="${param.path}/universities">Universities</a></li>
 						<li><a href="">Application</a></li>
 						<li><a href="">Grades</a></li>
 						<li><a href="">Notifications</a></li>
