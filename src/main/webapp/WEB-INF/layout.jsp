@@ -14,20 +14,20 @@
 			<nav>
 				<ul>
 				<c:choose>
-					<c:when test="${sessionScope.role=='student'}">
+					<c:when test="${sessionScope.client.role=='student'}">
 						<li><a href="${param.path}/universities">Universities</a></li>
 						<li><a href="">Application</a></li>
 						<li><a href="">Grades</a></li>
 						<li><a href="">Notifications</a></li>
 						<li><a href="${param.path}/sign_out_action">Sign out</a></li>
 					</c:when>
-					<c:when test="${sessionScope.role=='insa'}">
+					<c:when test="${sessionScope.client.role=='insa'}">
 						<li><a href="">Application</a></li>
 						<li><a href="">Grades</a></li>
 						
 						<li><a href="${param.path}/sign_out_action">Sign out</a></li>
 					</c:when>
-					<c:when test="${sessionScope.role=='university'}">
+					<c:when test="${sessionScope.client.role=='university'}">
 						<li><a href="">Student's application</a></li>
 						<li><a href="">Grades</a></li>
 						<li><a href="">Notifications</a></li>
