@@ -9,11 +9,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import utility.Constants;
 import beans.*;
@@ -24,28 +30,18 @@ public class University extends HttpServlet{
     public static final String PATH				= ".";
     
     private UniversityBean getUniversity(int id) {
-		URL obj;
-		try {
-			// TODO call real service
-			obj = new URL("http://localhost:8080/RestProject/webapi/UnivRessource/"+id);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			con.setRequestMethod("GET");
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();			
-			UniversityBean university = new ObjectMapper().readValue(response.toString(), UniversityBean.class);
-			return university;
-		} catch (Exception e) {			
+    	Client client = ClientBuilder.newClient();
+    	Response response = client.target("http://localhost:8080/RestProject/webapi/UnivRessource/"+id).request().get();
+    	int status = response.getStatus();
+    	String content = response.readEntity(String.class);
+    	try {
+    		UniversityBean university = new ObjectMapper().readValue(content, UniversityBean.class);
+    		return university;
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}
-		
-		
+		}	
     	
     }
     
