@@ -19,6 +19,9 @@ import utility.Constants;
 
 @WebServlet("/sign_in_action")
 public class SignInAction extends HttpServlet {
+	public static final String CONTENT 			= "home_page";
+    public static final String TITLE 			= "Home page";
+    public static final String PATH				= ".";
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -60,7 +63,10 @@ public class SignInAction extends HttpServlet {
 		}
 		
 		//Redirect to home page
-		response.sendRedirect("home_page");		
+		request.setAttribute(Constants.CHAMP_CONTENT, CONTENT);
+        request.setAttribute(Constants.CHAMP_TITLE, TITLE);
+        request.setAttribute(Constants.CHAMP_PATH, PATH);
+		this.getServletContext().getRequestDispatcher(Constants.VUE).forward(request,response);		
 	}
 	
 	private String signIn(beans.Client client) {
@@ -85,7 +91,7 @@ public class SignInAction extends HttpServlet {
 		
 		/*TODO Cedric
 		 * authentication service
-		 * request format : POST request with beans.client as json body 
+		 * request format : POST request with beans.Client as json body 
 		 * expected response : token string
 		 * */
 	}

@@ -39,7 +39,6 @@
 				</c:choose>				
 				</ul>
 			</nav>
-			<h3>${param.message}</h3>>
 			<h1>${param.title}</h1>
 			<jsp:include page="/WEB-INF/${param.content}.jsp"/>
 		</div>
