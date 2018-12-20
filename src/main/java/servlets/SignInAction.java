@@ -14,7 +14,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import beans.*;
+import beans.Role;
 import utility.Constants;
 
 @WebServlet("/sign_in_action")
@@ -28,7 +28,7 @@ public class SignInAction extends HttpServlet {
 		//Get session
 		HttpSession session = request.getSession();
 		
-		//If there is no httpSession
+		//If there is no httpSession client
 		if(session.getAttribute("client")==null) {
 			
 			//Get request parameters
@@ -92,7 +92,9 @@ public class SignInAction extends HttpServlet {
 		/*TODO Cedric
 		 * authentication service
 		 * request format : POST request with beans.Client as json body 
-		 * expected response : token string
+		 * expected response : 
+		 * entity : token string, status : 200 for success
+		 * entity : empty, status : 401 for failure
 		 * */
 	}
 }
