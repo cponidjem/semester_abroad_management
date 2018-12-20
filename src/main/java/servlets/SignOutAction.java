@@ -39,6 +39,7 @@ public class SignOutAction extends HttpServlet {
 			//Build DELETE request and get response
 			Client httpClient = ClientBuilder.newClient();
 	    	Response response = httpClient.target("http://localhost:8080/ServicePath").request().header("token", token).delete();
+	    	//TODO Cindy Replace with real service path
 	    	
 	    	//Get status code
 	    	int status = response.getStatus();

@@ -41,6 +41,7 @@ public class SignInAction extends HttpServlet {
 			
 			//Call REST API Authentication service and get token
 			String token = signIn(client);
+			token = "jzdhsjfh";
 			
 			//If authentication failed (status code 401 or empty body)
 			if(token.equals("")) {
@@ -76,6 +77,7 @@ public class SignInAction extends HttpServlet {
 		//Build POST request and get response
 		Client httpClient = ClientBuilder.newClient();
     	Response response = httpClient.target("http://localhost:8080/ServicePath").request().post(Entity.entity(client, MediaType.APPLICATION_JSON));
+    	//TODO Cindy Replace with real service path
     	
     	//Get status code
     	int status = response.getStatus();
@@ -93,7 +95,7 @@ public class SignInAction extends HttpServlet {
 		 * authentication service
 		 * request format : POST request with beans.Client as json body 
 		 * expected response : 
-		 * entity : token string, status : 200 for success
+		 * entity : String token, status : 200 for success
 		 * entity : empty, status : 401 for failure
 		 * */
 	}
