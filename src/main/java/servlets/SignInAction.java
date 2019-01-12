@@ -83,8 +83,7 @@ public class SignInAction extends HttpServlet {
     	int status = response.getStatus();
     	
     	//If authentication succeeded
-    	if (status == 200) {
-    		
+    	if (status == 200) {    		
     		//Read body as token
     		token = response.readEntity(String.class);
     	}	
