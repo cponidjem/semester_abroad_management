@@ -1,19 +1,17 @@
 package servlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import utility.Constants;
 import beans.*;
@@ -23,42 +21,62 @@ public class University extends HttpServlet{
 	public static final String CONTENT 			= "university";
     public static final String PATH				= ".";
     
-    private UniversityBean getUniversity(int id) {
-		URL obj;
-		try {
-			// TODO call real service
-			obj = new URL("http://localhost:8080/RestProject/webapi/UnivRessource/"+id);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			con.setRequestMethod("GET");
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();			
-			UniversityBean university = new ObjectMapper().readValue(response.toString(), UniversityBean.class);
-			return university;
-		} catch (Exception e) {			
-			e.printStackTrace();
-			return null;
-		}
-		
-		
+    private UniversityBean getUniversity(int id, HttpServletRequest request) {
+    	UniversityBean university = null;
+    	
+    	//Build GET request and get response
+    	Client client = ClientBuilder.newClient();
+    	Response response = client.target("http://localhost:8080/RestProject/webapi/UnivRessource/"+id).request().get();
+    	//TODO Cindy Replace with real service path
+    	
+    	//Get status code
+    	int status = response.getStatus();
+    	
+    	if (status == 404) {
+    		request.setAttribute(Constants.CHAMP_MESSAGE, "This university does not exist");
+    	} else if(status == 401) {
+    		request.setAttribute(Constants.CHAMP_MESSAGE, "You are not authorized to view this information");
+    	} else {
+        	try {
+        		//Read json body as University object
+        		university = new ObjectMapper().readValue(response.readEntity(String.class), UniversityBean.class);
+        		return university;
+        	} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}	
+    	}
+    	
+    	return university;
+    	/*TODO Cedric
+		 * universities service (get a specific university identified by its id)
+		 * request format : GET request at path/id
+		 * expected response : 
+		 * entity : University university as json, status : 200 for success
+		 * entity : empty, status : 404 if not found
+		 * entity : empty, status : 401 if not authorized (or is it 403 ?)
+		 * */
+    	
     	
     }
     
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		
+		//Get university id from request parameter
 		int id = Integer.parseInt(request.getParameter("id"));
-		UniversityBean university = getUniversity(id);
+		
+		////Call REST API Universities service and get university
+		UniversityBean university = getUniversity(id, request);
 		
 		request.setAttribute(Constants.CHAMP_CONTENT, CONTENT);
-        request.setAttribute(Constants.CHAMP_TITLE, university.getName());
-        request.setAttribute(Constants.CHAMP_PATH, PATH);
-        request.setAttribute("university", university);
-        
+		request.setAttribute(Constants.CHAMP_PATH, PATH);
+		
+		if(university != null) {
+			 request.setAttribute(Constants.CHAMP_TITLE, university.getName());
+			 request.setAttribute("university", university);
+		} 
+		
 		this.getServletContext().getRequestDispatcher(Constants.VUE).forward(request,response);		
 	}
 }

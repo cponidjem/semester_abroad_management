@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,26 +32,19 @@ public class Universities extends HttpServlet{
     public static final String PATH				= ".";
     
     private List<UniversityBean> getUniversities() {
-		URL obj;
-		try {
-			// TODO call real service
-			obj = new URL("http://localhost:8080/RestProject/webapi/UnivRessource");
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			con.setRequestMethod("GET");
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();			
-			List<UniversityBean> universities = new ObjectMapper().readValue(response.toString(), new TypeReference<List<UniversityBean>>(){});
+    	Client client = ClientBuilder.newClient();
+    	Response response = client.target("http://localhost:8080/RestProject/webapi/UnivRessource").request().get();
+    	int status = response.getStatus();
+    	String content = response.readEntity(String.class);
+    	try {
+			List<UniversityBean> universities = new ObjectMapper().readValue(content, new TypeReference<List<UniversityBean>>(){});
 			return universities;
-		} catch (Exception e) {			
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ArrayList<UniversityBean>();
-		}    	
+		}	
+    	
     }
     
 	@Override
