@@ -3,13 +3,12 @@ package beans;
 public class Client {
 	private String login;
 	private String password;
-	private Role role;
-	private String token;
+	private Role authority;
 	
 	public Client(String login, String password, Role role) {
 		this.login = login;
 		this.password = password;
-		this.role = role;
+		this.authority = role;
 	}
 	
 	public String getLogin() {
@@ -18,15 +17,9 @@ public class Client {
 	public String getPassword() {
 		return password;
 	}
-	public Role getRole() {
-		return role;
+	public Role getAuthority() {
+		return authority;
 	}
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
+	
 	
 }

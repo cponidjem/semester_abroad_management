@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +14,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Role;
 import utility.Constants;
@@ -40,21 +44,16 @@ public class SignInAction extends HttpServlet {
 			beans.Client client = new beans.Client(login, password, role);
 			
 			//Call REST API Authentication service and get token
-			String token = signIn(client);
-			token = "jzdhsjfh";
+			Boolean ok = signIn(client);
 			
 			//If authentication failed (status code 401 or empty body)
-			if(token.equals("")) {
+			if(!ok) {
 				
 				//Set failure message
 				 request.setAttribute(Constants.CHAMP_MESSAGE, "Authentication failed");
 				 
-			//If authentication succeeded (status code 200 and issued token)
+			//If authentication succeeded (status code 200)
 			} else {
-				
-				//Store token in client object
-				client.setToken(token);
-				
 				//Store client object in httpSession
 				session.setAttribute("client", client);
 				
@@ -70,13 +69,23 @@ public class SignInAction extends HttpServlet {
 		this.getServletContext().getRequestDispatcher(Constants.VUE).forward(request,response);		
 	}
 	
-	private String signIn(beans.Client client) {
-		//Initialize token to empty string
-		String token = "";
+	private Boolean signIn(beans.Client client) throws JsonProcessingException {
+		
+		
+		Boolean ok = false;
+		
+		//System.out.println(Entity.entity(client, MediaType.APPLICATION_JSON));
 		
 		//Build POST request and get response
 		Client httpClient = ClientBuilder.newClient();
     	Response response = httpClient.target("http://localhost:8080/ServicePath").request().post(Entity.entity(client, MediaType.APPLICATION_JSON));
+    	
+    	/*ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString(client);
+		
+		System.out.println(jsonInString);
+		*/
+    	
     	//TODO Cindy Replace with real service path
     	
     	//Get status code
@@ -85,17 +94,9 @@ public class SignInAction extends HttpServlet {
     	//If authentication succeeded
     	if (status == 200) {    		
     		//Read body as token
-    		token = response.readEntity(String.class);
+    		ok = true;
     	}	
 		
-		return token;
-		
-		/*TODO Cedric
-		 * authentication service
-		 * request format : POST request with beans.Client as json body 
-		 * expected response : 
-		 * entity : String token, status : 200 for success
-		 * entity : empty, status : 401 for failure
-		 * */
+		return ok;
 	}
 }

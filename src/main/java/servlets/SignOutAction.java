@@ -31,24 +31,7 @@ public class SignOutAction extends HttpServlet {
 		beans.Client client = (beans.Client)session.getAttribute("client");		
 		
 		//If there is a httpSession client
-		if(client!=null) {
-			
-			//Get client token
-			String token = client.getToken();
-			
-			//Build DELETE request and get response
-			Client httpClient = ClientBuilder.newClient();
-	    	Response response = httpClient.target("http://localhost:8080/ServicePath").request().header("token", token).delete();
-	    	//TODO Cindy Replace with real service path
-	    	
-	    	//Get status code
-	    	int status = response.getStatus();
-	    	
-	    	//If the action has been enacted but the response does not include an entity
-	    	if (status == 204) {
-	    		System.out.println("Sign out succeeded");
-	    	}
-	    	
+		if(client!=null) {	    	
 	    	request.getSession().invalidate();
 		}
 		
