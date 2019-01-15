@@ -31,9 +31,9 @@ public class Universities extends HttpServlet{
     public static final String TITLE 			= "Universities";
     public static final String PATH				= ".";
     
-    private List<UniversityBean> getUniversities() {
+    private List<UniversityBean> getUniversities(String country, String field) {
     	Client client = ClientBuilder.newClient();
-    	Response response = client.target("http://localhost:8080/RestProject/webapi/UnivRessource").request().get();
+    	Response response = client.target("http://localhost:8080/RestProject/webapi/UnivRessource").queryParam("country", country).queryParam("field", field).request().get();
     	int status = response.getStatus();
     	String content = response.readEntity(String.class);
     	try {
@@ -46,6 +46,7 @@ public class Universities extends HttpServlet{
 		}	
     	
     }
+    
     
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
@@ -78,7 +79,7 @@ public class Universities extends HttpServlet{
 		String country = request.getParameter("country");
 		String field = request.getParameter("field");
 		
-		List<UniversityBean> universities = this.getUniversities();
+		List<UniversityBean> universities = this.getUniversities(country,field);
 		
 		String [] countries  = {"Canada", "Japan", "China","New-Zealand"};
 		String [] fields  = {"Computer Sciences","Physics","Psychology"};
