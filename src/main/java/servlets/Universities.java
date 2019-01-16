@@ -19,7 +19,9 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.UniversityBean;
@@ -30,6 +32,38 @@ public class Universities extends HttpServlet{
 	public static final String CONTENT 			= "universities";
     public static final String TITLE 			= "Universities";
     public static final String PATH				= ".";
+    
+    private String[] getAllCountries() throws JsonParseException, JsonMappingException, IOException {
+    	String[] countries = {};
+    	
+    	Client client = ClientBuilder.newClient();
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Response response = client.target("http://localhost:9090/sambackend/countries").request().get();
+    	int status = response.getStatus();
+    	
+    	if(status == 200){
+    		String content = response.readEntity(String.class);
+    		countries = objectMapper.readValue(content, String[].class);
+    	} 
+    	
+    	return countries;
+    }
+    
+    private String[] getAllFields() throws JsonParseException, JsonMappingException, IOException {
+    	String[] fields = {};
+    	
+    	Client client = ClientBuilder.newClient();
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Response response = client.target("http://localhost:9090/sambackend/fields").request().get();
+    	int status = response.getStatus();
+    	
+    	if(status == 200){
+    		String content = response.readEntity(String.class);
+    		fields = objectMapper.readValue(content, String[].class);
+    	} 
+    	
+    	return fields;
+    }
     
     private List<UniversityBean> getUniversities(String country, String field) {
     	Client client = ClientBuilder.newClient();
@@ -50,20 +84,9 @@ public class Universities extends HttpServlet{
     
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		String [] countries  = {"Canada", "Japan", "China","New-Zealand"};
-		String [] fields  = {"Computer Sciences","Physics","Psychology"};
-        
-		/* TODO 
-		 * call API "get all countries" 
-		 * transform json array into array
-		 * or json into array list
-		 * */
-        
-        /* TODO 
-		 * call API "get all fields" 
-		 * transform json array into array
-		 * */
 		
+		String [] countries = this.getAllCountries();		
+		String [] fields  = this.getAllFields();		
 		
 		request.setAttribute(Constants.CHAMP_CONTENT, CONTENT);
         request.setAttribute(Constants.CHAMP_TITLE, TITLE);
@@ -81,19 +104,8 @@ public class Universities extends HttpServlet{
 		
 		List<UniversityBean> universities = this.getUniversities(country,field);
 		
-		String [] countries  = {"Canada", "Japan", "China","New-Zealand"};
-		String [] fields  = {"Computer Sciences","Physics","Psychology"};
-        
-		/* TODO 
-		 * call API "get all countries" 
-		 * transform json array into array
-		 * or json into array list
-		 * */
-        
-        /* TODO 
-		 * call API "get all fields" 
-		 * transform json array into array
-		 * */
+		String [] countries = this.getAllCountries();		
+		String [] fields  = this.getAllFields();	
 		
 		request.setAttribute(Constants.CHAMP_CONTENT, CONTENT);
         request.setAttribute(Constants.CHAMP_TITLE, TITLE);
